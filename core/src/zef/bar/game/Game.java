@@ -36,7 +36,7 @@ public class Game implements ApplicationListener{
 	public void render() {
 		Gdx.gl.glClear( GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT );
 //		GUI.render("zefBar", 100,100);
-		world.render();
+		world.render(); //Renders the world
 	}
 	
 	

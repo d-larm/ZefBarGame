@@ -15,78 +15,36 @@ public class ObjectManager {
 	private float vy = 0;
 	private int tileSize;
 	
-	public ObjectManager(){
+	public ObjectManager(){ //Instantiates the object list
 		objects = new ArrayList<Objects>();
 	}
 	
 	public ObjectManager(Player player, int tileSize){
-		renderer.setColor(Color.RED);
+		renderer.setColor(Color.RED); //Sets color of objects to red
 		this.player = player;
 		objects = new ArrayList<Objects>();
 	}
 	
-	public Player getPlayer(){
+	public Player getPlayer(){ //Gets the player object
 		return player;
 	}
 	
-	public void render(){
+	public void render(){ //Renders all the objects in the world
 		renderer.begin(ShapeType.Filled);
 		player.render(renderer);
 		for(int i=0;i<objects.size();i++)
 			objects.get(i).render(renderer);
 		renderer.end();	
-		translateObjects(vx,vy);
-		decelerate();
 	}
 	
-	public void render(boolean selectMode){
-		renderer.begin(ShapeType.Filled);
-		player.render(renderer);
-		for(int i=0;i<objects.size();i++)
-			objects.get(i).render(renderer);
-		renderer.end();
-		if(selectMode == false){
-			translateObjects(vx,vy);
-			decelerate();
-		}
-	}
-	
-	public void setProjectionMatrix(OrthographicCamera camera){
+	public void setProjectionMatrix(OrthographicCamera camera){ //Sets the projection matrix to the camera so all objects are rendered relative to the camera coordinates
 		renderer.setProjectionMatrix(camera.combined);
 	}
 	
-	
-	
-	public void setVelocity(float vx,float vy){
-		this.vx = vx;
-		this.vy = vy;
+	public void addObject(Objects newObject){
+		objects.add(newObject);
 	}
 	
-	public float getVelocityX(){
-		return vx;
-	}
-	
-	public float getVelocityY(){
-		return vy;
-	}
-	
-	
-	public void decelerate(){ //Decelerates map velocity over time
-		vx *= 0.9f;
-		if(vx < 0.05f && vx > -0.05f)
-			vx = 0;
-		
-		vy *= 0.9f;
-		if(vy < 0.05f && vy > -0.05f)
-			vy = 0;
-		
-	}
-	
-	public void translateObjects(float dx,float dy){
-		player.translateIso(dx, dy);
-		for(int i=0;i<objects.size();i++)
-			objects.get(i).translateIso(dx,dy);
-	}
 		
 
 }

@@ -27,7 +27,7 @@ public class TileManager {
 		addTiles();
 	}
 	
-	public void addTiles(){
+	public void addTiles(){ //Adds tiles to the tileMap array
 		for(int i=0;i<mapSize;i++){
 			for(int j=0;j<mapSize;j++){
 				tileMap[i][j] = new Tile(tileSize,i*tileSize,j*tileSize,renderer);
@@ -35,47 +35,23 @@ public class TileManager {
 		}
 	}
 	
-	public int getTileSize() {
+	public int getTileSize() { //Gets the size of a single tile
 		return tileSize;
 	}
 	
-	public void setProjectionMatrix(OrthographicCamera camera){
+	public void setProjectionMatrix(OrthographicCamera camera){ //Sets the projection matrix to the camera so all objects are rendered relative to the camera coordinates
 		renderer.setProjectionMatrix(camera.combined);
 	}
 	
-	public void render(){
+	public void render(){ //Renders all tiles in the world
 		renderer.begin(ShapeType.Line);
 		for(int i=0;i<mapSize;i++)
 			for(int j=0;j<mapSize;j++)
 				tileMap[i][j].renderIso();
 		renderer.end();
-		translateMap(vx,vy);
-		decelerate();
 	}
 	
-	public void render(boolean selectMode){
-		renderer.begin(ShapeType.Line);
-		for(int i=0;i<mapSize;i++){
-			for(int j=0;j<mapSize;j++){
-				tileMap[i][j].renderIso();
-			}
-		}
-		renderer.end();
-		if(selectMode == false){
-			translateMap(vx,vy);
-			decelerate();
-		}
-	}
-	
-//	public Tile getTile(float x,float y){
-//		tilePos.set(x, y);
-//		int xCoord = (int)Math.abs(tilePos.getX()/tileSize);
-//		int yCoord = (int)Math.abs(tilePos.getY()/tileSize);
-//		return tileMap[xCoord][yCoord];
-//		
-//	}
-	
-	public Tile getTile(float x,float y){
+	public Tile getTile(float x,float y){ //Returns the tile which contains on-screen coordinates (x,y) 
 		tilePos.set(x, y);
 		for(int i=0;i<mapSize;i++)
 			for(int j=0;j<mapSize;j++)
@@ -84,38 +60,6 @@ public class TileManager {
 		return new Tile(0,renderer);
 		
 	}
-	
-	public void setVelocity(float vx,float vy){
-		this.vx = vx;
-		this.vy = vy;
-	}
-	
-	public float getVelocityX(){
-		return vx;
-	}
-	
-	public float getVelocityY(){
-		return vy;
-	}
-	
-	
-	public void decelerate(){ //Decelerates map velocity over time
-		vx *= 0.9f;
-		if(vx < 0.05f && vx > -0.05f)
-			vx = 0;
-		
-		vy *= 0.9f;
-		if(vy < 0.05f && vy > -0.05f)
-			vy = 0;
-		
-	}
-	
-	public void translateMap(float dx,float dy){
-		for(int i=0;i<mapSize;i++){
-			for(int j=0;j<mapSize;j++){
-				tileMap[i][j].translateIso(dx,dy);
-			}
-		}
-	}
+
 
 }

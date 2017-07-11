@@ -17,7 +17,7 @@ import zef.bar.game.objects.Player;
 import zef.bar.game.point.IsoPoint;
 import zef.bar.game.tile.*;
 
-public class World implements InputProcessor, GestureListener{
+public class World implements InputProcessor{
 	
 	private boolean playerSelectMode = false;
 	private TileManager tileManager;
@@ -35,25 +35,24 @@ public class World implements InputProcessor, GestureListener{
 	
 	
 	public World(){
-		tileManager = new TileManager(WORLD_SIZE,TILE_SIZE);
-		gestureDetector = new GestureDetector(this);
-		Gdx.input.setInputProcessor(this);
-		Player player = new Player(0,0, TILE_SIZE);
-		objManager = new ObjectManager(player, TILE_SIZE);
-		touchPoint = new IsoPoint();
-		camera = new GameCamera();
-		camera.translate(player.getIsoX(),player.getIsoY());
-		touchPos = new Vector3();
+		tileManager = new TileManager(WORLD_SIZE,TILE_SIZE); //Creates a new tile manager with WORLD_SIZE*WORLD_SIZE tiles of size TILE_SIZE
+		Gdx.input.setInputProcessor(this); //Sets the input processor to read inputs
+		Player player = new Player(0,0, TILE_SIZE); //Creates a new player
+		objManager = new ObjectManager(player, TILE_SIZE); //Creates a new object manager
+		touchPoint = new IsoPoint(); // Converts the touch point coordinates into an IsoPoint
+		camera = new GameCamera(); //Instantiates a new Game Camera
+		camera.translate(player.getIsoX(),player.getIsoY()); //Translates the camera to the player's position
+		touchPos = new Vector3(); //Vector containing the camera's projection coordinates
 		
 		
 	}
 	
 	public void render(){
-		camera.update();
-		camera.pan(playerSelectMode);
-		tileManager.setProjectionMatrix(camera);
+		camera.update(); //Updates the camera
+		camera.pan(playerSelectMode); //Pans the camera depending on the selection mode
+		tileManager.setProjectionMatrix(camera); //Sets the projection matrix of rendered tiles to the camera
 		tileManager.render();
-		objManager.setProjectionMatrix(camera);
+		objManager.setProjectionMatrix(camera); //Sets the projection matrix of rendered objects to the camera
 		objManager.render();
 	}
 
@@ -78,12 +77,12 @@ public class World implements InputProcessor, GestureListener{
 	@Override
 	public boolean touchDown(int screenX, int screenY, int pointer, int button) {
 		// TODO Auto-generated method stub
-		touchPos.set(screenX,screenY,0);
-		camera.unproject(touchPos);
-		touchPoint.set(touchPos.x, touchPos.y);
-		if(objManager.getPlayer().isWithinIso(touchPos.x,touchPos.y)){
-			playerSelectMode = true;
-			tileManager.getTile(touchPos.x, touchPos.y).setColor(Color.BLUE);
+		touchPos.set(screenX,screenY,0); //Gets the touch position vector (Z coordinate is 0)
+		camera.unproject(touchPos); //Unprojects the touch position into world coordinates
+		touchPoint.set(touchPos.x, touchPos.y); //Sets the touch point in the world as an Isometric Point
+		if(objManager.getPlayer().isWithinIso(touchPos.x,touchPos.y)){ //Checks whether the player was touched
+			playerSelectMode = true; //Switches to select mode
+			tileManager.getTile(touchPos.x, touchPos.y).setColor(Color.BLUE); //Highlights selected tile
 			Gdx.app.log("Print", "World:("+(int)(touchPos.x)+","+(int)(touchPos.y)+"), Screen:("+screenX+","+screenY+")");
 			Gdx.app.log("Print", "IsoWorld:("+(int)(touchPoint.getIsoX())+","+(int)(touchPoint.getIsoY())+")");
 			Gdx.app.log("Print", "Select Mode Enabled");
@@ -96,9 +95,9 @@ public class World implements InputProcessor, GestureListener{
 	@Override
 	public boolean touchUp(int screenX, int screenY, int pointer, int button) {
 		// TODO Auto-generated method stub
-		playerSelectMode = false;
+		playerSelectMode = false; //Switches to panning mode
 		Gdx.app.log("Print", "Select Mode Disabled");
-		for(int i=0;i<selectedTiles.size();i++)
+		for(int i=0;i<selectedTiles.size();i++) //Unselected selected tiles when select mode 
 			selectedTiles.get(i).setColor(Color.WHITE);
 		return true;
 	}
@@ -110,14 +109,12 @@ public class World implements InputProcessor, GestureListener{
 	    float deltaY = Gdx.input.getDeltaY();
    
 	    touchPos.set(screenX,screenY,0);
-		camera.unproject(touchPos);
+		camera.unproject(touchPos); 
 		
-	    if(deltaX != 0 || deltaY != 0){
-//	    	tileManager.setVelocity(deltaX, -deltaY);
-//	    	objManager.setVelocity(deltaX, -deltaY);
-	    	camera.setVelocity(-deltaX,deltaY);
+	    if(deltaX != 0 || deltaY != 0){ //Sets the velocity of the camera to the delta movements whilst panning
+	    	camera.setVelocity(-deltaX,deltaY); 
 	    } 
-	    if(playerSelectMode){
+	    if(playerSelectMode){ //Highlights selected tiles while the touch is down and add them to an array of selected tiles
 	    	Tile currentTile = tileManager.getTile(touchPos.x, touchPos.y);
 	    	currentTile.setColor(Color.BLUE);
 	    	selectedTiles.add(currentTile);
@@ -137,79 +134,6 @@ public class World implements InputProcessor, GestureListener{
 		return false;
 	}
 
-	@Override
-	public boolean touchDown(float x, float y, int pointer, int button) {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	@Override
-	public boolean tap(float x, float y, int count, int button) {
-		// TODO Auto-generated method stub
-//		touchPos.set(x,y,0);
-//		camera.unproject(touchPos);
-//		touchPoint.set(touchPos.x, touchPos.y);
-//		if(objManager.getPlayer().isWithinIso(touchPos.x,touchPos.y)){
-//			playerSelectMode = true;
-//			objManager.getPlayer().translate(256,256);
-//		}
-//		tileManager.getTile(touchPos.x, touchPos.y).setColor(Color.BLUE);
-//		Gdx.app.log("Print", "World:("+(int)(touchPos.x)+","+(int)(touchPos.y)+"), Screen:("+x+","+y+")");
-//		Gdx.app.log("Print", "IsoWorld:("+(int)(touchPoint.getIsoX())+","+(int)(touchPoint.getIsoY())+")");
-//		Gdx.app.log("Print", "Select Mode Enabled");
-		return true;
-	}
-
-	@Override
-	public boolean longPress(float x, float y) {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	@Override
-	public boolean fling(float velocityX, float velocityY, int button) {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	@Override
-	public boolean pan(float x, float y, float deltaX, float deltaY) {
-		// TODO Auto-generated method stub
-		touchPos.set(x,y,0);
-		camera.unproject(touchPos);
-		
-	    if(deltaX != 0 || deltaY != 0){
-//	    	tileManager.setVelocity(deltaX, -deltaY);
-//	    	objManager.setVelocity(deltaX, -deltaY);
-	    	camera.setVelocity(-deltaX,deltaY);
-	    }
-	    return true;
-	}
-
-	@Override
-	public boolean panStop(float x, float y, int pointer, int button) {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	@Override
-	public boolean zoom(float initialDistance, float distance) {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	@Override
-	public boolean pinch(Vector2 initialPointer1, Vector2 initialPointer2, Vector2 pointer1, Vector2 pointer2) {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	@Override
-	public void pinchStop() {
-		// TODO Auto-generated method stub
-		
-	}
-	
 	public void setVelocity(float vx,float vy){
 		this.vx = vx;
 		this.vy = vy;
