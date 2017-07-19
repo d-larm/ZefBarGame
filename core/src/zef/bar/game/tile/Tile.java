@@ -18,7 +18,7 @@ public class Tile {
 	private IsoPoint topLeft;
 	private IsoPoint topRight;
 	private Color color;
-	private int range = 30;
+	private int range = 0;
 	private IsoPoint minX = new IsoPoint();
 	private IsoPoint maxX = new IsoPoint();
 	private IsoPoint minY = new IsoPoint();
@@ -118,6 +118,13 @@ public class Tile {
 		maxY.set(topLeft.getX(),topLeft.getY()-range);
 		
 		if(x >= minX.getIsoX() && x <= maxX.getIsoX() && y >= minY.getIsoY() && y <= maxY.getIsoY())
+			return true;
+		else
+			return false;
+	}
+	
+	public boolean isWithin(float x,float y){
+		if(x >= bottomLeft.getX() && x <= bottomRight.getX() && y >= bottomLeft.getY() && y <= topLeft.getY())
 			return true;
 		else
 			return false;

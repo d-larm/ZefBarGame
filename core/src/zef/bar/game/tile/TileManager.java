@@ -1,5 +1,6 @@
 package zef.bar.game.tile;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
@@ -51,13 +52,25 @@ public class TileManager {
 		renderer.end();
 	}
 	
-	public Tile getTile(float x,float y){ //Returns the tile which contains on-screen coordinates (x,y) 
-		tilePos.set(x, y);
-		for(int i=0;i<mapSize;i++)
-			for(int j=0;j<mapSize;j++)
-				if(tileMap[i][j].isWithinIso(tilePos.getX(),tilePos.getY()))
-					return tileMap[i][j];
-		return new Tile(0,renderer);
+	public Tile getTile(float x,float y){ //Returns the tile which contains world coordinates (x,y) 
+		if(x >= 0 && y >= 0){
+			int xIndex = Math.floorDiv((int)x, tileSize);
+			int yIndex = Math.floorDiv((int)y, tileSize);
+//			Gdx.app.log("Print", "Tile:("+xIndex+","+yIndex+")");
+			return tileMap[xIndex][yIndex];
+		}else
+			return null;
+	
+//		tilePos.set(x, y);
+//		for(int i=0;i<mapSize;i++)
+//			for(int j=0;j<mapSize;j++)
+//				if(tileMap[i][j].isWithin(tilePos.getX(),tilePos.getY())){
+//					
+//					Gdx.app.log("Print", "Tile Position: "+tileMap[i][j].getX()+","+tileMap[i][j].getY()+")");
+//					return tileMap[i][j];
+//				}
+//		
+//		return new Tile(0,renderer);
 		
 	}
 

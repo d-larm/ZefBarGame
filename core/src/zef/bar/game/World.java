@@ -25,13 +25,13 @@ public class World implements InputProcessor{
 	GestureDetector gestureDetector;
 	private IsoPoint touchPoint;
 	private GameCamera camera;
-	private int WORLD_SIZE = 10;
-	
-	private int TILE_SIZE=(int)(1024);
+	private int WORLD_SIZE = 20; //Instantiate world square dimensions
+	private int TILE_SIZE=(int)(128); //Instantiate tile size
 	Vector3 touchPos;
 	private float vx = 0;
 	private float vy = 0;
 	private ArrayList<Tile> selectedTiles = new ArrayList<Tile>();
+	private Tile selectedTile;
 	
 	
 	public World(){
@@ -43,8 +43,6 @@ public class World implements InputProcessor{
 		camera = new GameCamera(); //Instantiates a new Game Camera
 		camera.translate(player.getIsoX(),player.getIsoY()); //Translates the camera to the player's position
 		touchPos = new Vector3(); //Vector containing the camera's projection coordinates
-		
-		
 	}
 	
 	public void render(){
@@ -79,24 +77,28 @@ public class World implements InputProcessor{
 		// TODO Auto-generated method stub
 		touchPos.set(screenX,screenY,0); //Gets the touch position vector (Z coordinate is 0)
 		camera.unproject(touchPos); //Unprojects the touch position into world coordinates
-		touchPoint.set(touchPos.x, touchPos.y); //Sets the touch point in the world as an Isometric Point
-		if(objManager.getPlayer().isWithinIso(touchPos.x,touchPos.y)){ //Checks whether the player was touched
+		touchPoint.setIso(touchPos.x, touchPos.y); //Sets the touch point in the world as an Isometric Point
+		selectedTile = tileManager.getTile(touchPoint.getX(), touchPoint.getY());
+		
+		
+		if(objManager.getPlayer().isWithin(touchPoint.getX(),touchPoint.getY())){ //Checks whether the player was touched
 			playerSelectMode = true; //Switches to select mode
-			tileManager.getTile(touchPos.x, touchPos.y).setColor(Color.BLUE); //Highlights selected tile
-			Gdx.app.log("Print", "World:("+(int)(touchPos.x)+","+(int)(touchPos.y)+"), Screen:("+screenX+","+screenY+")");
-			Gdx.app.log("Print", "IsoWorld:("+(int)(touchPoint.getIsoX())+","+(int)(touchPoint.getIsoY())+")");
-			Gdx.app.log("Print", "Select Mode Enabled");
+			Gdx.app.log("Print", "World:("+(int)(touchPoint.getX())+","+(int)(touchPoint.getY()));
+			selectedTile.setColor(Color.BLUE); //Highlights selected tile
 		}
 		
+		if(selectedTile != null){
+			selectedTile.setColor(Color.BLUE);
+			selectedTiles.add(selectedTile);
+		}
+	
 		return true;
-
 	}
 
 	@Override
 	public boolean touchUp(int screenX, int screenY, int pointer, int button) {
 		// TODO Auto-generated method stub
 		playerSelectMode = false; //Switches to panning mode
-		Gdx.app.log("Print", "Select Mode Disabled");
 		for(int i=0;i<selectedTiles.size();i++) //Unselected selected tiles when select mode 
 			selectedTiles.get(i).setColor(Color.WHITE);
 		return true;
@@ -110,12 +112,13 @@ public class World implements InputProcessor{
    
 	    touchPos.set(screenX,screenY,0);
 		camera.unproject(touchPos); 
+		touchPoint.setIso(touchPos.x, touchPos.y);
 		
 	    if(deltaX != 0 || deltaY != 0){ //Sets the velocity of the camera to the delta movements whilst panning
 	    	camera.setVelocity(-deltaX,deltaY); 
 	    } 
 	    if(playerSelectMode){ //Highlights selected tiles while the touch is down and add them to an array of selected tiles
-	    	Tile currentTile = tileManager.getTile(touchPos.x, touchPos.y);
+	    	Tile currentTile = tileManager.getTile(touchPoint.getX(), touchPoint.getY());
 	    	currentTile.setColor(Color.BLUE);
 	    	selectedTiles.add(currentTile);
 	    }

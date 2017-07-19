@@ -35,7 +35,7 @@ public class IsoPoint{ //Class for isometric and Cartesian point
 		//Returns the x location on the Cartesian plane
 		return x;
 	}
-	
+
 	public float getY(){
 		//Returns the y location on the Cartesian plane
 		return y;
@@ -113,6 +113,13 @@ public class IsoPoint{ //Class for isometric and Cartesian point
 		//Sets the location in the Cartesian plane
 		setX(newX);
 		setY(newY);
+		calcIsoPoint();
+	}
+	
+	public void setIso(float newX, float newY){
+		//Sets the location in the Cartesian plane
+		setIsoX(newX);
+		setIsoY(newY);
 		calcIsoPoint();
 	}
 	
